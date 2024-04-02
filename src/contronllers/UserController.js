@@ -44,23 +44,7 @@ const createUser = async (req, res) => {
                 status: 'ERR',
                 message: 'The date of birth is required',
             });
-        } else {
-            // Tính toán tuổi từ ngày sinh
-            const today = new Date();
-            const birthDate = new Date(dateOfBirth);
-            const age = today.getFullYear() - birthDate.getFullYear();
-            const monthDiff = today.getMonth() - birthDate.getMonth();
-            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-                age--;
-            }
-
-            // Kiểm tra tuổi
-            if (age < 18) {
-                return res.status(200).json({
-                    status: 'ERR',
-                    message: 'User must be at least 18 years old',
-                });
-            }
+        
         }
         
         // Kiểm tra giới tính và ngày tháng năm sinh có thể được thực hiện ở đây nếu cần thiết
