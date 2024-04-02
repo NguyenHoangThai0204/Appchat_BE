@@ -4,11 +4,11 @@ const { genneralAccessToken, genneralRefreshToken } = require('./JwtService');
 
 const createUser = (newUser) => {
     return new Promise(async (resolve, reject) => {
-        const { name, username, phone, password, confirmPassword } = newUser;
+        const { name, username, phone, gender, dateOfBirth, password, confirmPassword } = newUser;
 
         try {
             const checkUser = await User.findOne({
-                username: username,
+                phone: phone,
             });
             if (checkUser !== null) {
                 resolve({
@@ -18,10 +18,12 @@ const createUser = (newUser) => {
             }
             const hash = bcrypt.hashSync(password, 10);
             console.log('hash', hash);
-            const cresteUser = await User.create({
+            const createUser = await User.create({
                 name,
                 username,
                 phone,
+                gender,
+                dateOfBirth,
                 password: hash,
                 confirmPassword,
             });
@@ -29,7 +31,7 @@ const createUser = (newUser) => {
                 resolve({
                     status: 'OK',
                     message: 'SUCCESS',
-                    data: cresteUser,
+                    data: createUser,
                 });
             }
         } catch (e) {
@@ -49,7 +51,7 @@ const loginUser = (userLogin) => {
             if (checkUser === null) {
                 resolve({
                     status: 'ERR',
-                    massage: 'User is not defined',
+                    message: 'User is not defined',
                 });
             }
             const comparePassword = bcrypt.compareSync(password, checkUser.password);
@@ -58,7 +60,7 @@ const loginUser = (userLogin) => {
             if (!comparePassword) {
                 resolve({
                     status: 'ERR',
-                    message: 'The password or user is incorrect',
+                    message: 'The password is incorrect',
                 });
             }
             const accessToken = await genneralAccessToken({
@@ -75,6 +77,7 @@ const loginUser = (userLogin) => {
                 message: 'SUCCESS',
                 accessToken,
                 refreshToken,
+                userLogin: checkUser,
             });
             // }
         } catch (e) {
