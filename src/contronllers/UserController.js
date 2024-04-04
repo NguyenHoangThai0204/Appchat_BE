@@ -101,6 +101,7 @@ const uploadAvatar = async (req, res) => {
         return res.status(403).json({ status: 'ERR', error: e });
     }
 };
+
 const loginUser = async (req, res) => {
     try {
         // console.log(req.body);
