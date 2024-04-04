@@ -2,6 +2,7 @@ const express = require('express');
 const routes = express.Router();
 const userContronller = require('../contronllers/UserController');
 const { authMiddleware, authUserMiddleware } = require('../middleware/authMiddleware');
+const uploadFileMiddleware = require('../middleware/fileUpload');
 
 //[POST] http://localhost:3001/api/user/signup
 routes.post('/signup', userContronller.createUser);
@@ -26,5 +27,9 @@ routes.get('/getDetails/:id', authUserMiddleware, userContronller.getDetailsUser
 
 //localhost:3001/api/user/refreshToken
 routes.post('/refreshToken', userContronller.refreshToken);
+
+//localhost:3001/api/user/uploadAvatar
+routes.post('/uploadAvatar', uploadFileMiddleware.single('file'), userContronller.uploadAvatar);
+
 
 module.exports = routes;

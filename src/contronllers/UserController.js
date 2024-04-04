@@ -6,7 +6,7 @@ const createUser = async (req, res) => {
         const { name, username, phone, gender, dateOfBirth, password, confirmPassword } = req.body;
         const regEmail = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
         const regPhone = /^\d{10,}$/; // Định dạng số điện thoại gồm ít nhất 10 chữ số
-        
+
         if (!name || !username || !phone || !password || !confirmPassword) {
             return res.status(200).json({
                 status: 'ERR',
@@ -17,19 +17,19 @@ const createUser = async (req, res) => {
                 status: 'ERR',
                 message: 'The input is not a valid email',
             });
-        } else if (!regPhone.test(phone)) {
-            return res.status(200).json({
-                status: 'ERR',
-                message: 'The phone number is not valid',
-            });
         }
+        // else if (!regPhone.test(phone)) {
+        //     return res.status(200).json({
+        //         status: 'ERR',
+        //         message: 'The phone number is not valid',
+        //     });
+        // }
         else if (password !== confirmPassword) {
             return res.status(200).json({
                 status: 'ERR',
                 message: 'The input does not match the confirmed password',
             });
-        } 
-        else if (password.length < 8) {
+        } else if (password.length < 8) {
             return res.status(200).json({
                 status: 'ERR',
                 message: 'Password must be at least 8 characters long',
@@ -39,16 +39,32 @@ const createUser = async (req, res) => {
                 status: 'ERR',
                 message: 'Password must contain at least one number, one uppercase letter, and one special character',
             });
-        }else if (dateOfBirth === null || dateOfBirth === undefined) {
+        } else if (dateOfBirth === null || dateOfBirth === undefined) {
             return res.status(200).json({
                 status: 'ERR',
                 message: 'The date of birth is required',
             });
-        
+        } else {
+            // Tính toán tuổi từ ngày sinh
+            const today = new Date();
+            const birthDate = new Date(dateOfBirth);
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+
+            // Kiểm tra tuổi
+            if (age < 18) {
+                return res.status(200).json({
+                    status: 'ERR',
+                    message: 'User must be at least 18 years old',
+                });
+            }
         }
-        
+
         // Kiểm tra giới tính và ngày tháng năm sinh có thể được thực hiện ở đây nếu cần thiết
-        
+
         const response = await UserService.createUser(req.body);
         return res.status(200).json(response);
     } catch (e) {
@@ -57,8 +73,34 @@ const createUser = async (req, res) => {
         });
     }
 };
+const uploadAvatar = async (req, res) => {
+    console.log('req.file', req.file);
+    if (!req?.file) {
+        res.status(403).json({
+            status: 'false',
+            message: 'Please upload a file',
+        });
+        return;
+    }
+    console.log('req?.file', req?.file);
+    let data = {};
 
+    if (!!req?.file) {
+        data = {
+            url: req.file.location,
+            type: req.file.mimetype,
+        };
+    }
 
+    try {
+        res.send({
+            data: data,
+            status: true,
+        });
+    } catch (e) {
+        return res.status(403).json({ status: 'ERR', error: e });
+    }
+};
 const loginUser = async (req, res) => {
     try {
         // console.log(req.body);
@@ -215,4 +257,5 @@ module.exports = {
     getDetailsUser,
     refreshToken,
     logoutUser,
+    uploadAvatar,
 };
