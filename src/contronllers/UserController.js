@@ -5,7 +5,8 @@ const createUser = async (req, res) => {
     try {
         const { name, username, phone, gender, dateOfBirth, password, confirmPassword } = req.body;
         const regEmail = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
-        const regPhone = /^\d{10,}$/; // Định dạng số điện thoại gồm ít nhất 10 chữ số
+        const regPhone = /^\+84\d{9}$/;
+ // Định dạng số điện thoại gồm +84 và 9 chữ số
 
         if (!name || !username || !phone || !password || !confirmPassword) {
             return res.status(200).json({
@@ -18,12 +19,12 @@ const createUser = async (req, res) => {
                 message: 'The input is not a valid email',
             });
         }
-        // else if (!regPhone.test(phone)) {
-        //     return res.status(200).json({
-        //         status: 'ERR',
-        //         message: 'The phone number is not valid',
-        //     });
-        // }
+        else if (!regPhone.test(phone)) {
+            return res.status(200).json({
+                status: 'ERR',
+                message: 'The phone number is not valid +84xxxxxxxxx',
+            });
+        }
         else if (password !== confirmPassword) {
             return res.status(200).json({
                 status: 'ERR',
@@ -135,21 +136,18 @@ const loginUser = async (req, res) => {
         });
     }
 };
-
 const updateUser = async (req, res) => {
     try {
-        // console.log('check', isCheckEmail);
-        const userId = req.params.id;
-        const data = req.body;
-        if (!userId) {
-            return res.status(200).json({
-                status: 'ERR',
-                message: 'The userId is required',
-            });
-        }
+        // const { name, username, phone, gender, dateOfBirth } = req.body;
+        // const regEmail = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
+        // const regPhone = /^\d{10,}$/; // Định dạng số điện thoại gồm ít nhất 10 chữ số
 
-        console.log('userId', userId);
-        const response = await UserService.updateUser(userId, data);
+        console.log('req.body', req.body);
+        // Kiểm tra và xử lý từng thuộc tính được cung cấp trong req.body
+        
+        const userId = req.params.id;
+        
+        const response = await UserService.updateUser(userId, req.body);
         return res.status(200).json(response);
     } catch (e) {
         return res.status(404).json({

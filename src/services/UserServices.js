@@ -90,7 +90,7 @@ const updateUser = (id, data) => {
     return new Promise(async (resolve, reject) => {
         try {
             const checkUser = await User.findOne({ _id: id });
-            // console.log('checkUser', checkUser);
+            console.log('checkUser', checkUser);
 
             if (checkUser === null) {
                 resolve({
@@ -98,15 +98,17 @@ const updateUser = (id, data) => {
                     massage: 'User is not defined',
                 });
             }
+            
             const updateUser = await User.findByIdAndUpdate(id, data, { new: true });
-            // console.log('updateUser', updateUser);
-            // console.log('access_Token', access_Token);
+            console.log('id update', id);
+            console.log('data update', data);
+            console.log('updateUserFindByIDAndUpdate', updateUser);
             resolve({
                 status: 'OK',
                 message: 'SUCCESS',
                 data: updateUser,
             });
-            // }
+            console.log('updateUser', updateUser);
         } catch (e) {
             reject(e);
         }

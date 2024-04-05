@@ -27,7 +27,7 @@ const authMiddleware = (req, res, next) => {
 };
 
 const authUserMiddleware = (req, res, next) => {
-    // console.log('token', req.headers.token);
+    console.log('token: ', req.headers.token);
 
     const token = req.headers.token.split(' ')[1];
     const userId = req.params.id;
@@ -51,6 +51,9 @@ const authUserMiddleware = (req, res, next) => {
         // console.log('user', user);
     });
 };
+
+
+
 module.exports = {
     authMiddleware,
     authUserMiddleware,
