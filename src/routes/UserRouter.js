@@ -33,5 +33,10 @@ routes.post('/refreshToken', userController.refreshToken);
 //localhost:3001/api/user/uploadAvatar
 routes.post('/uploadAvatar', uploadFileMiddleware.single('file'), userController.uploadAvatar);
 
+//[GET] http://localhost:3001/api/user/getAllFiend/:id
+routes.get('/getAllFiend/:id', userController.getAllFriend);
+//[GET] http://localhost:3001/api/user/getDetailsByPhone/:phone
+routes.get('/getDetailsByPhone/:phone',userController.getDetailByPhone)
+
 
 module.exports = routes;

@@ -247,6 +247,45 @@ const logoutUser = async (req, res) => {
     }
 };
 
+const getAllFriend = async (req, res) => {
+    try {
+        const userId = req.params.id;
+        if (!userId) {
+            return res.status(200).json({
+                status: 'ERR',
+                message: 'The userId is required',
+            });
+        }
+
+        const response = await UserService.getAllFriend(userId);
+        console.log(response)
+        return res.status(200).json(response);
+    } catch (e) {
+        return res.status(404).json({
+            message: e,
+        });
+    }
+};
+const getDetailByPhone = async (req, res) => {
+    try {
+        const phone = req.params.phone;
+        if (!phone) {
+            return res.status(200).json({
+                status: 'ERR',
+                message: 'The userId is required',
+            });
+        }
+
+        const response = await UserService.getDetailByPhone(phone);
+        console.log(response)
+        return res.status(200).json(response);
+    } catch (e) {
+        return res.status(404).json({
+            message: e,
+        });
+    }
+};
+
 module.exports = {
     createUser,
     loginUser,
@@ -257,4 +296,6 @@ module.exports = {
     refreshToken,
     logoutUser,
     uploadAvatar,
+    getAllFriend,
+    getDetailByPhone,
 };

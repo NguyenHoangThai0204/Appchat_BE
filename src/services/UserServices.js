@@ -179,6 +179,52 @@ const getDetailsUser = (id) => {
     });
 };
 
+const getDetailByPhone = (phone) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const user = await User.findOne({ phone: phone });
+            console.log(user)
+            if (user == null) {
+                resolve({
+                    status: 'ERR',
+                    massage: 'User is not defined',
+                });
+            }
+            resolve({
+                status: 'OK',
+                message: 'SUCCESS',
+                data: user,
+            });
+            // }
+        } catch (e) {
+            reject(e);
+        }
+    });
+};
+const  getAllFriend = (id) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const user = await User.findOne({ _id: id });
+            console.log(user)
+            if (user == null) {
+                resolve({
+                    status: 'ERR',
+                    massage: 'User is not defined',
+                });
+            }
+            resolve({
+                status: 'OK',
+                message: 'SUCCESS',
+                data: user.phoneBooks,
+            });
+            // }
+        } catch (e) {
+            reject(e);
+        }
+    });
+};
+
+
 module.exports = {
     createUser,
     loginUser,
@@ -186,4 +232,6 @@ module.exports = {
     deleteUser,
     getAllUser,
     getDetailsUser,
+    getDetailByPhone,
+    getAllFriend
 };
