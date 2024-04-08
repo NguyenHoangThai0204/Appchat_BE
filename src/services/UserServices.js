@@ -126,19 +126,19 @@ const addFriend = (id, newFriend) => {
                     massage: 'User is not defined',
                 });
             }
-            // Thêm mới bạn bè vào mảng phoneBooks
+
             checkUser.phoneBooks.push(newFriend);
-            // Lưu lại người dùng đã được cập nhật
+
             const updatedUser = await checkUser.save(newFriend);
             
-            // Trả về kết quả thành công và người dùng đã được cập nhật
+          
             resolve({
                 status: 'OK',
                 message: 'Friend added successfully',
                 data: updatedUser,
             });
         } catch (error) {
-            // Nếu có lỗi xảy ra trong quá trình thực hiện, trả về lỗi
+           
             reject(error);
         }
     });
