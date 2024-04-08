@@ -129,7 +129,7 @@ const addFriend = (id, newFriend) => {
 
             checkUser.phoneBooks.push(newFriend);
 
-            const updatedUser = await checkUser.save(newFriend);
+            const updatedUser = await checkUser.save();
             
           
             resolve({
@@ -157,8 +157,7 @@ const deleteUser = (id) => {
                 });
             }
             await User.findByIdAndDelete(id);
-            // console.log('updateUser', updateUser);
-            // console.log('access_Token', access_Token);
+            
             resolve({
                 status: 'OK',
                 message: 'DELETE USER SUCCESS',
