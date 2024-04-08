@@ -18,6 +18,10 @@ routes.post('/logout', userController.logoutUser);
 // routes.put('/updateUser/:id', authUserMiddleware, userController.updateUser);
 routes.put('/updateUser/:id', userController.updateUser);
 
+//[PUT] http://localhost:3001/api/user/addFriend/:id
+// chỉ cần object {"name":"thai", "phone":"+84703328743"}
+routes.put('/addFriend/:id', userController.addFriend);
+
 //[DELETE] http://localhost:3001/api/user/deleteUser/:id
 routes.delete('/deleteUser/:id', authMiddleware, userController.deleteUser);
 
@@ -35,6 +39,7 @@ routes.post('/uploadAvatar', uploadFileMiddleware.single('file'), userController
 
 //[GET] http://localhost:3001/api/user/getAllFriend/:id
 routes.get('/getAllFriend/:id', userController.getAllFriend);
+
 //[GET] http://localhost:3001/api/user/getDetailsByPhone/:phone
 routes.get('/getDetailsByPhone/:phone',userController.getDetailByPhone)
 

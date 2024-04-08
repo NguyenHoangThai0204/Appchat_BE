@@ -137,12 +137,7 @@ const loginUser = async (req, res) => {
     }
 };
 const updateUser = async (req, res) => {
-    try {
-        // const { name, username, phone, gender, dateOfBirth } = req.body;
-        // const regEmail = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
-        // const regPhone = /^\d{10,}$/; // Định dạng số điện thoại gồm ít nhất 10 chữ số
-
-        console.log('req.body', req.body);
+    try {console.log('req.body', req.body);
         // Kiểm tra và xử lý từng thuộc tính được cung cấp trong req.body
         
         const userId = req.params.id;
@@ -155,7 +150,20 @@ const updateUser = async (req, res) => {
         });
     }
 };
-
+const addFriend = async (req, res) => {
+    try {console.log('req.body', req.body);
+        // Kiểm tra và xử lý từng thuộc tính được cung cấp trong req.body
+        
+        const userId = req.params.id;
+        
+        const response = await UserService.addFriend(userId, req.body);
+        return res.status(200).json(response);
+    } catch (e) {
+        return res.status(404).json({
+            message: e,
+        });
+    }
+};
 const deleteUser = async (req, res) => {
     try {
         // console.log('check', isCheckEmail);
@@ -292,6 +300,7 @@ module.exports = {
     updateUser,
     deleteUser,
     getAllUser,
+    addFriend,
     getDetailsUser,
     refreshToken,
     logoutUser,

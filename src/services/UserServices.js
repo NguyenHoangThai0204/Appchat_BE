@@ -114,6 +114,35 @@ const updateUser = (id, data) => {
         }
     });
 };
+const addFriend = (id, newFriend) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const checkUser = await User.findOne({ _id: id });
+            console.log('new friend', newFriend);
+
+            if (checkUser === null) {
+                resolve({
+                    status: 'ERR',
+                    massage: 'User is not defined',
+                });
+            }
+            // Thêm mới bạn bè vào mảng phoneBooks
+            checkUser.phoneBooks.push(newFriend);
+            // Lưu lại người dùng đã được cập nhật
+            const updatedUser = await checkUser.save(newFriend);
+            
+            // Trả về kết quả thành công và người dùng đã được cập nhật
+            resolve({
+                status: 'OK',
+                message: 'Friend added successfully',
+                data: updatedUser,
+            });
+        } catch (error) {
+            // Nếu có lỗi xảy ra trong quá trình thực hiện, trả về lỗi
+            reject(error);
+        }
+    });
+};
 
 const deleteUser = (id) => {
     return new Promise(async (resolve, reject) => {
@@ -230,6 +259,7 @@ module.exports = {
     loginUser,
     updateUser,
     deleteUser,
+    addFriend,
     getAllUser,
     getDetailsUser,
     getDetailByPhone,
