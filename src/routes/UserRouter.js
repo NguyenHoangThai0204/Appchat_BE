@@ -24,8 +24,8 @@ routes.delete('/deleteUser/:id', authMiddleware, userController.deleteUser);
 //[GET] http://localhost:3001/api/user/getAllUser
 routes.get('/getAllUser', authMiddleware, userController.getAllUser);
 
-//[GET] http://localhost:3001/api/user/getDetailsUser/:id
-routes.get('/getDetails/:id', authUserMiddleware, userController.getDetailsUser);
+//[GET] http://localhost:3001/api/user/getDetails/:id
+routes.get('/getDetails/:id', userController.getDetailsUser);
 
 //localhost:3001/api/user/refreshToken
 routes.post('/refreshToken', userController.refreshToken);
@@ -37,6 +37,7 @@ routes.post('/uploadAvatar', uploadFileMiddleware.single('file'), userController
 routes.get('/getAllFriend/:id', userController.getAllFriend);
 //[GET] http://localhost:3001/api/user/getDetailsByPhone/:phone
 routes.get('/getDetailsByPhone/:phone',userController.getDetailByPhone)
+
 
 
 module.exports = routes;
