@@ -2,8 +2,15 @@ const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 dotenv.config();
 
+// const generateJWTToken = (payload) => {
+//     const jwtToken = jwt.sign({ ...payload }, process.env.JWT_SECRET, {
+//         expiresIn: "15d",
+//     });
+
+//     return jwtToken; // Trả về token đã được tạo
+// };
+
 const genneralAccessToken = (payload) => {
-    // console.log('payload', payload);
     const accessToken = jwt.sign(
         {
             ...payload,
@@ -15,7 +22,6 @@ const genneralAccessToken = (payload) => {
 };
 
 const genneralRefreshToken = (payload) => {
-    // console.log('payload', payload);
     const refreshToken = jwt.sign(
         {
             ...payload,
@@ -26,15 +32,14 @@ const genneralRefreshToken = (payload) => {
     return refreshToken;
 };
 
-const refreshTokenJwtService = (token) => {
+const refreshTokenJwtService = (token, res) => { // Thêm tham số res vào refreshTokenJwtService
     return new Promise(async (resolve, reject) => {
         try {
-            // console.log('token', token);
             jwt.verify(token, process.env.REFRESH_TOKEN, async (err, user) => {
                 if (err) {
                     resolve({
                         status: 'ERR',
-                        message: 'The authenticaltion',
+                        message: 'The authentication',
                     });
                 }
 
@@ -43,11 +48,16 @@ const refreshTokenJwtService = (token) => {
                     id: user.id,
                     isAdmin: user?.isAdmin,
                 });
-                // console.log('access_token', access_token);
+                const refresh_token = await genneralRefreshToken({
+                    id: user.id,
+                    isAdmin: user?.isAdmin,
+                });
+                
                 resolve({
                     status: 'OK',
                     message: 'SUCCESS',
                     access_token,
+                    refresh_token,
                 });
             });
         } catch (e) {

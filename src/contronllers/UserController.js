@@ -1,5 +1,6 @@
 const UserService = require('../services/UserServices');
 const JwtService = require('../services/JwtService');
+const generateTokenAndSetCookie = require('../middleware/generateToken');
 
 const createUser = async (req, res) => {
     try {
@@ -105,7 +106,7 @@ const uploadAvatar = async (req, res) => {
 
 const loginUser = async (req, res) => {
     try {
-        // console.log(req.body);
+        console.log("Req.body",req.body);
         const { username, password } = req.body;
         const reg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
         const isCheckEmail = reg.test(username);
@@ -123,12 +124,18 @@ const loginUser = async (req, res) => {
 
         const response = await UserService.loginUser(req.body);
         const { refreshToken, ...newReponse } = response;
-        // console.log('response', response);
+        
+        generateTokenAndSetCookie(response.userLogin._id.toString(), res);
+
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
             secure: false,
             samesite: 'strict',
         });
+        // generateTokenAndSetCookie(response.data.data._id, res);
+        console.log('response id', response.userLogin._id.toString());
+
+        console.log("cookies: ", req.cookies)
         return res.status(200).json(newReponse);
     } catch (e) {
         return res.status(404).json({
@@ -223,13 +230,19 @@ const refreshToken = async (req, res) => {
     // console.log('req.cookie', req.cookies);
     try {
         const token = req.cookies.refresh_Token;
+        const jwt = req.cookies.jwt;
         if (!token) {
             return res.status(200).json({
                 status: 'ERR',
                 message: 'The token is required',
             });
+        } else if (!jwt) {
+            return res.status(200).json({
+                status: 'ERR',
+                message: 'The jwt is required',
+            });
         }
-
+        
         const response = await JwtService.refreshTokenJwtService(token);
         return res.status(200).json(response);
     } catch (e) {
@@ -242,7 +255,7 @@ const refreshToken = async (req, res) => {
 const logoutUser = async (req, res) => {
     console.log('req.cookie', req.cookies);
     try {
-        // res.cookie("jwt", "", { maxAge: 0 });
+        res.cookie("jwt", "", { maxAge: 0 });
         res.clearCookie('refreshToken');
 
         return res.status(200).json({
