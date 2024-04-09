@@ -240,8 +240,9 @@ const refreshToken = async (req, res) => {
 };
 
 const logoutUser = async (req, res) => {
-    // console.log('req.cookie', req.cookies);
+    console.log('req.cookie', req.cookies);
     try {
+        // res.cookie("jwt", "", { maxAge: 0 });
         res.clearCookie('refreshToken');
 
         return res.status(200).json({
