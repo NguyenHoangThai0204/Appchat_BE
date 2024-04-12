@@ -199,9 +199,8 @@ const getMessagesOnApp = async (req, res) => {
 const sendUploadFileOnApp = async (req, res) => {
     try {
         const { id: receiverId } = req.params;
-		// const senderId = "660d0419b5a424a85cc54a1e"
-        // const senderId = req.body;
-		const senderId = req.query.senderId;
+        const senderId = req.query.senderId;
+        
         let fileData = null;
         let filePath = null;
 
@@ -221,13 +220,12 @@ const sendUploadFileOnApp = async (req, res) => {
             });
         }
 
-		const message =req.file.location
+        const message = req.file.location || filePath; // Sử dụng req.file.location nếu tồn tại, nếu không sử dụng filePath
+
         const newMessage = new Message({
             senderId,
             receiverId,
-            // file: fileData,
-			message
-
+            message
         });
 
         if (newMessage) {
@@ -244,10 +242,11 @@ const sendUploadFileOnApp = async (req, res) => {
         let data = {};
         if (!!req.file) {
             data = {
-                url: req.file.location,
+                url: req.file.location || filePath, // Sử dụng req.file.location nếu tồn tại, nếu không sử dụng filePath
                 type: req.file.mimetype,
             };
         }
+
         const resultMessage = {
             ...newMessage.toObject(),
             data: data, 
@@ -260,4 +259,5 @@ const sendUploadFileOnApp = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
 module.exports = { sendMessage, getMessages, sendUploadFile, sendMessageOnApp, getMessagesOnApp, sendUploadFileOnApp };

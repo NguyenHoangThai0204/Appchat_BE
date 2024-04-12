@@ -25,13 +25,13 @@ const storage = multerS3({
 });
 
 function checkFileType( file, cb) {
-    const filetypes = /jpeg|jpg|png|gif/;
+    const filetypes = /jpeg|jpg|png|gif|pdf|doc|docx|xls|xlsx|ppt|pptx/;
     const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
     const mimetype = filetypes.test(file.mimetype);
     if (extname && mimetype) {
         return cb(null, true);
     } else {
-        cb('Error: Images Only (jpeg, jpn, png, gif)!');
+        cb('Error: File Only (jpeg|jpg|png|gif|pdf|doc|docx|xls|xlsx|ppt|pptx)!');
     }
 }
 
