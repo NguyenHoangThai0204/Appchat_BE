@@ -98,7 +98,6 @@ const updateUser = (id, data) => {
                     massage: 'User is not defined',
                 });
             }
-            
             const updateUser = await User.findByIdAndUpdate(id, data, { new: true });
             console.log('id update', id);
             console.log('data update', data);
@@ -114,6 +113,48 @@ const updateUser = (id, data) => {
         }
     });
 };
+
+const deleteFriend = async (id, phoneToDelete) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const checkUser = await User.findOne({ _id: id });
+
+            if (!checkUser) {
+                resolve({
+                    status: 'ERR',
+                    message: 'User is not defined',
+                });
+            }
+
+            // Tìm vị trí của object trong phoneBooks có phone trùng với phone cần xoá
+            const index = checkUser.phoneBooks.findIndex(item => item.phone === phoneToDelete);
+
+            // Nếu không tìm thấy object nào có phone trùng, trả về lỗi
+            if (index === -1) {
+                resolve({
+                    status: 'ERR',
+                    message: 'Friend with this phone number does not exist',
+                });
+            }
+
+            // Xoá object có phone trùng khỏi phoneBooks
+            checkUser.phoneBooks.splice(index, 1);
+
+            // Lưu cập nhật vào cơ sở dữ liệu
+            const updatedUser = await checkUser.save();
+
+            resolve({
+                status: 'OK',
+                message: 'Friend deleted successfully',
+                data: updatedUser,
+            });
+        } catch (error) {
+            reject(error);
+        }
+    });
+};
+
+
 const addFriend = (id, newFriend) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -252,15 +293,93 @@ const  getAllFriend = (id) => {
     });
 };
 
+// add invite
+const addInvite = (id, data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const checkUser = await User.findOne({ _id: id });
+            console.log('checkUser', checkUser);
 
+            if (checkUser === null) {
+                resolve({
+                    status: 'ERR',
+                    massage: 'User is not defined',
+                });
+            }
+                // Tạo một bản sao của mảng invite và thêm dữ liệu mới vào đó
+                // const newInviteArray = [...checkUser.invite ];
+                // checkUser.invite.push({
+                //     id: data.invite.id,
+                //     name: data.invite.name,
+                //     phone: data.invite.phone
+                // })
+
+            checkUser.invite.push(data)
+            const updateUser = await checkUser.save();
+            console.log('updateUser', updateUser);
+            // console.log('access_Token', access_Token);
+            // await User.findOneAndUpdate
+
+            resolve({
+                status: 'OK',
+                message: 'SUCCESS',
+                data: updateUser,
+            });
+            // }
+        } catch (e) {
+            reject(e);
+        }
+    });
+};
+// ad loi moi cua ban than. xem ban than da gui loi moi cho nhung ai
+const addListFriend = (id, data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const checkUser = await User.findOne({ _id: id });
+            console.log('checkUser', checkUser);
+
+            if (checkUser === null) {
+                resolve({
+                    status: 'ERR',
+                    massage: 'User is not defined',
+                });
+            }
+                // Tạo một bản sao của mảng invite và thêm dữ liệu mới vào đó
+                // const newInviteArray = [...checkUser.invite ];
+                // checkUser.invite.push({
+                //     id: data.invite.id,
+                //     name: data.invite.name,
+                //     phone: data.invite.phone
+                // })
+
+            checkUser.listAddFriend.push(data)
+            const updateUser = await checkUser.save();
+            console.log('updateUser', updateUser);
+            // console.log('access_Token', access_Token);
+            // await User.findOneAndUpdate
+
+            resolve({
+                status: 'OK',
+                message: 'SUCCESS',
+                data: updateUser,
+            });
+            // }
+        } catch (e) {
+            reject(e);
+        }
+    });
+};
 module.exports = {
     createUser,
     loginUser,
+    addInvite,
+    addListFriend,
     updateUser,
     deleteUser,
     addFriend,
     getAllUser,
     getDetailsUser,
     getDetailByPhone,
-    getAllFriend
+    getAllFriend,
+    deleteFriend
 };

@@ -157,6 +157,21 @@ const updateUser = async (req, res) => {
         });
     }
 };
+const deleteFriend = async (req, res) => {
+    try {console.log('req.body', req.body);
+        // Kiểm tra và xử lý từng thuộc tính được cung cấp trong req.body
+        
+        const userId = req.params.id;
+        
+        const response = await UserService.deleteFriend(userId, req.body);
+        return res.status(200).json(response);
+    } catch (e) {
+        return res.status(404).json({
+            message: e,
+        });
+    }
+};
+
 const addFriend = async (req, res) => {
     try {console.log('req.body', req.body);
         // Kiểm tra và xử lý từng thuộc tính được cung cấp trong req.body
@@ -173,11 +188,8 @@ const addFriend = async (req, res) => {
 };
 const deleteUser = async (req, res) => {
     try {
-        // console.log('check', isCheckEmail);
+
         const userId = req.params.id;
-        // const token = req.headers;
-        // console.log('token', token);
-        // console.log('userId', userId);
 
         if (!userId) {
             return res.status(200).json({
@@ -186,7 +198,7 @@ const deleteUser = async (req, res) => {
             });
         }
 
-        // console.log('userId', userId);
+    
         const response = await UserService.deleteUser(userId);
         return res.status(200).json(response);
     } catch (e) {
@@ -307,14 +319,61 @@ const getDetailByPhone = async (req, res) => {
         });
     }
 };
+// them loi moi ket ban
+const addInvite = async (req, res) => {
+    try {
+        // console.log('check', isCheckEmail);
+        const userId = req.params.id;
+        const data = req.body;
+        if (!userId) {
+            return res.status(200).json({
+                status: 'ERR',
+                message: 'The userId is required',
+            });
+        }
 
+        console.log('userId', userId);
+        const response = await UserService.addInvite(userId, data);
+        return res.status(200).json(response);
+    } catch (e) {
+        return res.status(404).json({
+            message: e,
+        });
+    }
+};
+// bạn đã gửi lời mời cho những ai
+const addListFriend = async (req, res) => {
+    try {
+        // console.log('check', isCheckEmail);
+        console.log('req.body', req.body)
+        const userId = req.params.id;
+        const data = req.body;
+        if (!userId) {
+            return res.status(200).json({
+                status: 'ERR',
+                message: 'The userId is required',
+            });
+        }
+
+        console.log('userId bi gi v', userId);
+        const response = await UserService.addListFriend(userId, data);
+        return res.status(200).json(response);
+    } catch (e) {
+        return res.status(404).json({
+            message: e,
+        });
+    }
+};
 module.exports = {
     createUser,
+    addInvite,
+    addListFriend,
     loginUser,
     updateUser,
     deleteUser,
     getAllUser,
     addFriend,
+    deleteFriend,
     getDetailsUser,
     refreshToken,
     logoutUser,

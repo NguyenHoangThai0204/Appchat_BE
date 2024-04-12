@@ -38,6 +38,15 @@ const userSchema = new mongoose.Schema(
             type: [{ name: String, phone: String }],
             default: [],
         },
+        invite:{
+            type: [{ id:String,name: String, phone: String }],
+            default: [],
+        },
+        // ban da gui loi moi cho ai
+        listAddFriend:{
+            type: [{ id:String,name: String, phone: String }],
+            default: [],
+        },
         isAdmin: {
             type: Boolean,
             default: false,

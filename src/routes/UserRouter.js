@@ -21,7 +21,13 @@ routes.put('/updateUser/:id', userController.updateUser);
 //[PUT] http://localhost:3001/api/user/addFriend/:id
 // chỉ cần object {"name":"thai", "phone":"+84703328743"}
 routes.put('/addFriend/:id', userController.addFriend);
+// thêm lời mời kết bạn
+// [PUT] http://localhost:3001/api/user/addInvite/:id
+routes.put('/addInvite/:id', userController.addInvite);
 
+// thêm lời mời kết bạn vào ban than
+// [PUT] http://localhost:3001/api/user/addListFriend/:id
+routes.put('/addListFriend/:id', userController.addListFriend);
 //[DELETE] http://localhost:3001/api/user/deleteUser/:id
 routes.delete('/deleteUser/:id', authMiddleware, userController.deleteUser);
 
@@ -43,6 +49,7 @@ routes.get('/getAllFriend/:id', userController.getAllFriend);
 //[GET] http://localhost:3001/api/user/getDetailsByPhone/:phone
 routes.get('/getDetailsByPhone/:phone',userController.getDetailByPhone)
 
-
+//[POST] http://localhost:3001/api/user/deleteFriend/:id
+routes.post('/deleteFriend/:id', userController.deleteFriend);
 
 module.exports = routes;
