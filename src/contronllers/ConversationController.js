@@ -15,5 +15,20 @@ const getAllConversationOfUser = async (req, res) => {
     throw error;
   }
 };
+const createGroup = async (req, res) => {
+  try {
+    const { groupName, participants } = req.body; // Lấy dữ liệu từ body của yêu cầu
+    // Tạo một cuộc trò chuyện mới
+    const conversation = new Conversation({
+      groupName: groupName,
+      participants: participants
+    });
+    await conversation.save();
+    res.status(201).json(conversation); // Trả về dữ liệu của cuộc trò chuyện đã tạo
+  } catch (error) {
+    console.error('Lỗi quá trình tạo group:', error);
+    res.status(500).json({ error: 'Lỗi quá trình tạo group' });
+  }
+};
 
-module.exports = {getAllConversationOfUser};
+module.exports = {getAllConversationOfUser, createGroup};
