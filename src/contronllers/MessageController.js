@@ -260,4 +260,9 @@ const sendUploadFileOnApp = async (req, res) => {
     }
 };
 
-module.exports = { sendMessage, getMessages, sendUploadFile, sendMessageOnApp, getMessagesOnApp, sendUploadFileOnApp };
+
+
+
+
+
+module.exports = { sendMessage, getMessages, sendUploadFile, sendMessageOnApp, getMessagesOnApp, sendUploadFileOnApp};

@@ -32,7 +32,10 @@ routes.put('/addListFriend/:id', userController.addListFriend);
 routes.delete('/deleteUser/:id', authMiddleware, userController.deleteUser);
 
 //[GET] http://localhost:3001/api/user/getAllUser
-routes.get('/getAllUser', authMiddleware, userController.getAllUser);
+// routes.get('/getAllUser', authMiddleware, userController.getAllUser);
+
+//[GET] http://localhost:3001/api/user/getAllUser
+routes.get('/getAllUser', userController.getAllUser);
 
 //[GET] http://localhost:3001/api/user/getDetails/:id
 routes.get('/getDetails/:id', userController.getDetailsUser);

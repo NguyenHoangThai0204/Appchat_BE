@@ -26,4 +26,5 @@ router.post('/upload/:id', protectRoute, uploadFileMiddleware.single('file'), se
 //[POST] http://localhost:3001/api/messages/uploadOnApp/:id
 // 
 router.post('/uploadOnApp/:id', uploadFileMiddleware.single('file'), sendUploadFileOnApp);
+
 module.exports = router;
