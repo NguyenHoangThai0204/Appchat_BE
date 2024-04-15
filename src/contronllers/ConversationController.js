@@ -99,4 +99,32 @@ const sendMessageToGroup = async (req, res) => {
   }
 };
 
-module.exports = {getAllConversationOfUser, createGroup,sendMessageToGroup, getGroupMessages};
+// lay 1 conversation de show thanh vien
+const getConversationById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log("conversationId: ", id);
+    
+    // Tìm cuộc trò chuyện theo ID và populate thông tin của các participants
+    const conversation = await Conversation.findById(id);
+    
+    if (!conversation) {
+      return res.status(404).json({ message: 'Conversation not found' });
+    }
+    
+    
+    console.log("conversation: ", conversation);
+    // Lấy danh sách ID người tham gia từ cuộc trò chuyện
+    const participantIds = conversation.participants;
+    const participantsInfo = await User.find({ _id: { $in: participantIds } });
+
+    console.log(participantsInfo);
+    res.status(200).json(participantsInfo);
+  } catch (error) {
+    console.error('Error fetching conversation:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+
+module.exports = {getAllConversationOfUser, createGroup,sendMessageToGroup, getGroupMessages, getConversationById};
