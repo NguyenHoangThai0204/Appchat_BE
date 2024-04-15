@@ -1,5 +1,25 @@
 const Conversation = require('../models/ConversationSchema.js');
 const Message = require('../models/Message');
+
+// delete conversation
+const deleteConversation = async (req, res) => {
+  try {
+    const {id} = req.params;
+    
+    // Xóa cuộc trò chuyện với id được cung cấp
+    const deletedConversation = await Conversation.findByIdAndDelete(id);
+
+    if (!deletedConversation) {
+      return res.status(404).json({ message: 'Conversation not found' });
+    }
+
+    res.status(200).json({ message: 'Conversation deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting conversation:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
 const getAllConversationOfUser = async (req, res) => {
   try {
     const {id:userId} = req.params;
@@ -127,4 +147,4 @@ const getConversationById = async (req, res) => {
 };
 
 
-module.exports = {getAllConversationOfUser, createGroup,sendMessageToGroup, getGroupMessages, getConversationById};
+module.exports = {getAllConversationOfUser, createGroup,sendMessageToGroup, getGroupMessages, getConversationById, deleteConversation};
