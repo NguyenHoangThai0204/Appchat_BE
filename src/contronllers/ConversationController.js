@@ -1,5 +1,5 @@
 const Conversation = require('../models/ConversationSchema.js');
-
+const Message = require('../models/Message');
 const getAllConversationOfUser = async (req, res) => {
   try {
     const {id:userId} = req.params;
@@ -30,5 +30,42 @@ const createGroup = async (req, res) => {
     res.status(500).json({ error: 'Lỗi quá trình tạo group' });
   }
 };
+const getGroupMessages = async (req, res) => {
+  try {
+    const { groupId } = req.params; // Lấy id của nhóm từ params của request
+    // Tìm cuộc trò chuyện dựa trên groupId và lấy ra trường messages
+    const conversation = await Conversation.findById(groupId, 'messages');
+    if (!conversation) {
+      return res.status(404).json({ error: 'Không tìm thấy cuộc trò chuyện' });
+    }
 
-module.exports = {getAllConversationOfUser, createGroup};
+    // Lấy ra các ID của tin nhắn từ conversation.messages
+    const messageIds = conversation.messages;
+
+    // Thực hiện truy vấn để lấy nội dung của các tin nhắn
+    const messagePromises = messageIds.map(messageId => {
+      return Message.findById(messageId);
+    });
+
+    // Kết hợp kết quả của các truy vấn thành một mảng
+    const messages = await Promise.all(messagePromises);
+
+    // Tạo một mảng chứa thông tin cần thiết của các tin nhắn
+    const messagesContent = messages.map(message => {
+      return {
+        message: message.message,
+        senderId: message.senderId,
+        createdAt: message.createdAt
+      };
+    });
+
+    // Trả về danh sách các tin nhắn của cuộc trò chuyện
+    res.status(200).json({ messages: messagesContent });
+  } catch (error) {
+    console.error('Lỗi khi lấy tin nhắn của nhóm:', error);
+    res.status(500).json({ error: 'Lỗi khi lấy tin nhắn của nhóm' });
+  }
+};
+
+
+module.exports = {getAllConversationOfUser, createGroup, getGroupMessages};
