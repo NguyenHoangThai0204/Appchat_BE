@@ -120,9 +120,6 @@ const sendUploadFile = async (req, res) => {
     }
 };
 
-
-
-
 const sendMessageOnApp = async (req, res) => {
 	try {
 		const { message, userId } = req.body; // Láº¥y userId tá»« req.body

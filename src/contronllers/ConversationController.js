@@ -67,5 +67,36 @@ const getGroupMessages = async (req, res) => {
   }
 };
 
+const sendMessageToGroup = async (req, res) => {
+  try {
+    const { groupId, senderId, message } = req.body; // Nhận dữ liệu từ client
 
-module.exports = {getAllConversationOfUser, createGroup, getGroupMessages};
+    // Tạo một tin nhắn mới
+    const newMessage = new Message({
+      senderId: senderId,
+      receiverId: groupId,
+      message: message
+    });
+
+    // Lưu tin nhắn mới vào cơ sở dữ liệu
+    await newMessage.save();
+
+    // Thêm ID của tin nhắn mới vào mảng tin nhắn của nhóm
+    const conversation = await Conversation.findById(groupId);
+    if (!conversation) {
+      return res.status(404).json({ error: 'Không tìm thấy cuộc trò chuyện' });
+    }
+    conversation.messages.push(newMessage._id);
+
+    // Lưu lại thông tin cập nhật của nhóm
+    await conversation.save();
+
+    // Gửi phản hồi về cho client
+    res.status(201).json({ message: 'Tin nhắn đã được gửi thành công' });
+  } catch (error) {
+    console.error('Lỗi khi gửi tin nhắn đến nhóm:', error);
+    res.status(500).json({ error: 'Lỗi khi gửi tin nhắn đến nhóm' });
+  }
+};
+
+module.exports = {getAllConversationOfUser, createGroup,sendMessageToGroup, getGroupMessages};
