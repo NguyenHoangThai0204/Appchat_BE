@@ -37,13 +37,14 @@ const getAllConversationOfUser = async (req, res) => {
 };
 const createGroup = async (req, res) => {
   try {
-    const { groupName, participants } = req.body; // Lấy dữ liệu từ body của yêu cầu
+    const { groupName, participants, idAdmin } = req.body; // Lấy dữ liệu từ body của yêu cầu
     // Tạo một cuộc trò chuyện mới
     const conversation = new Conversation({
       groupName: groupName,
-      participants: participants
+      participants: participants,
+      idAdmin: idAdmin
     });
-    await conversation.save();
+    await conversation.save(); // Lưu cuộc trò chuyện vào cơ sở dữ liệu
     res.status(201).json(conversation); // Trả về dữ liệu của cuộc trò chuyện đã tạo
   } catch (error) {
     console.error('Lỗi quá trình tạo group:', error);

@@ -35,7 +35,7 @@ const userSchema = new mongoose.Schema(
             default: false,
         },
         phoneBooks: {
-            type: [{ name: String, phone: String }],
+            type: [{id:String, name: String, phone: String, avatar: String}],
             default: [],
         },
         invite:{

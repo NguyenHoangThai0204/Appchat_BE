@@ -7,7 +7,7 @@ const createUser = async (req, res) => {
         const { name, username, phone, gender, dateOfBirth, password, confirmPassword } = req.body;
         const regEmail = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
         const regPhone = /^\+84\d{9}$/;
- // Định dạng số điện thoại gồm +84 và 9 chữ số
+        // Định dạng số điện thoại gồm +84 và 9 chữ số
 
         if (!name || !username || !phone || !password || !confirmPassword) {
             return res.status(200).json({
@@ -19,14 +19,12 @@ const createUser = async (req, res) => {
                 status: 'ERR',
                 message: 'The input is not a valid email',
             });
-        }
-        else if (!regPhone.test(phone)) {
+        } else if (!regPhone.test(phone)) {
             return res.status(200).json({
                 status: 'ERR',
                 message: 'The phone number is not valid +84xxxxxxxxx',
             });
-        }
-        else if (password !== confirmPassword) {
+        } else if (password !== confirmPassword) {
             return res.status(200).json({
                 status: 'ERR',
                 message: 'The input does not match the confirmed password',
@@ -106,7 +104,7 @@ const uploadAvatar = async (req, res) => {
 
 const loginUser = async (req, res) => {
     try {
-        console.log("Req.body",req.body);
+        console.log('Req.body', req.body);
         const { username, password } = req.body;
         const reg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
         const isCheckEmail = reg.test(username);
@@ -124,7 +122,7 @@ const loginUser = async (req, res) => {
 
         const response = await UserService.loginUser(req.body);
         const { refreshToken, ...newReponse } = response;
-        
+
         generateTokenAndSetCookie(response.userLogin._id.toString(), res);
 
         res.cookie('refreshToken', refreshToken, {
@@ -135,7 +133,7 @@ const loginUser = async (req, res) => {
         // generateTokenAndSetCookie(response.data.data._id, res);
         console.log('response id', response.userLogin._id.toString());
 
-        console.log("cookies: ", req.cookies)
+        console.log('cookies: ', req.cookies);
         return res.status(200).json(newReponse);
     } catch (e) {
         return res.status(404).json({
@@ -144,11 +142,12 @@ const loginUser = async (req, res) => {
     }
 };
 const updateUser = async (req, res) => {
-    try {console.log('req.body', req.body);
+    try {
+        console.log('req.body', req.body);
         // Kiểm tra và xử lý từng thuộc tính được cung cấp trong req.body
-        
+
         const userId = req.params.id;
-        
+
         const response = await UserService.updateUser(userId, req.body);
         return res.status(200).json(response);
     } catch (e) {
@@ -158,11 +157,12 @@ const updateUser = async (req, res) => {
     }
 };
 const deleteFriend = async (req, res) => {
-    try {console.log('req.body', req.body);
+    try {
+        console.log('req.body', req.body);
         // Kiểm tra và xử lý từng thuộc tính được cung cấp trong req.body
-        
+
         const userId = req.params.id;
-        
+
         const response = await UserService.deleteFriend(userId, req.body);
         return res.status(200).json(response);
     } catch (e) {
@@ -173,11 +173,12 @@ const deleteFriend = async (req, res) => {
 };
 
 const addFriend = async (req, res) => {
-    try {console.log('req.body', req.body);
+    try {
+        console.log('req.body', req.body);
         // Kiểm tra và xử lý từng thuộc tính được cung cấp trong req.body
-        
+
         const userId = req.params.id;
-        
+
         const response = await UserService.addFriend(userId, req.body);
         return res.status(200).json(response);
     } catch (e) {
@@ -188,7 +189,6 @@ const addFriend = async (req, res) => {
 };
 const deleteUser = async (req, res) => {
     try {
-
         const userId = req.params.id;
 
         if (!userId) {
@@ -198,7 +198,6 @@ const deleteUser = async (req, res) => {
             });
         }
 
-    
         const response = await UserService.deleteUser(userId);
         return res.status(200).json(response);
     } catch (e) {
@@ -254,7 +253,7 @@ const refreshToken = async (req, res) => {
                 message: 'The jwt is required',
             });
         }
-        
+
         const response = await JwtService.refreshTokenJwtService(token);
         return res.status(200).json(response);
     } catch (e) {
@@ -267,7 +266,7 @@ const refreshToken = async (req, res) => {
 const logoutUser = async (req, res) => {
     console.log('req.cookie', req.cookies);
     try {
-        res.cookie("jwt", "", { maxAge: 0 });
+        res.cookie('jwt', '', { maxAge: 0 });
         res.clearCookie('refreshToken');
 
         return res.status(200).json({
@@ -292,7 +291,7 @@ const getAllFriend = async (req, res) => {
         }
 
         const response = await UserService.getAllFriend(userId);
-        console.log(response)
+        console.log(response);
         return res.status(200).json(response);
     } catch (e) {
         return res.status(404).json({
@@ -311,7 +310,7 @@ const getDetailByPhone = async (req, res) => {
         }
 
         const response = await UserService.getDetailByPhone(phone);
-        console.log(response)
+        console.log(response);
         return res.status(200).json(response);
     } catch (e) {
         return res.status(404).json({
@@ -345,7 +344,7 @@ const addInvite = async (req, res) => {
 const addListFriend = async (req, res) => {
     try {
         // console.log('check', isCheckEmail);
-        console.log('req.body', req.body)
+        console.log('req.body', req.body);
         const userId = req.params.id;
         const data = req.body;
         if (!userId) {
@@ -364,6 +363,41 @@ const addListFriend = async (req, res) => {
         });
     }
 };
+// xóa loi moi ngta gui cho currentUser
+const deleteInvite = async (req, res) => {
+    try {
+        console.log('req.body', req.body);
+        // Kiểm tra và xử lý từng thuộc tính được cung cấp trong req.body
+        const { phone } = req.body;
+        console.log(phone);
+        const userId = req.params.id;
+
+        const response = await UserService.deleteInvite(userId, phone);
+        return res.status(200).json(response);
+    } catch (e) {
+        return res.status(404).json({
+            message: e,
+        });
+    }
+};
+// xóa loi moi tui gui cho ngta
+
+const deleteListaddFriend = async (req, res) => {
+    try {
+        console.log('req.body', req.body);
+        // Kiểm tra và xử lý từng thuộc tính được cung cấp trong req.body
+        const { phone } = req.body;
+        const userId = req.params.id;
+
+        const response = await UserService.deleteListaddFriend(userId, phone);
+        return res.status(200).json(response);
+    } catch (e) {
+        return res.status(404).json({
+            message: e,
+        });
+    }
+};
+
 module.exports = {
     createUser,
     addInvite,
@@ -380,4 +414,6 @@ module.exports = {
     uploadAvatar,
     getAllFriend,
     getDetailByPhone,
+    deleteInvite,
+    deleteListaddFriend,
 };

@@ -50,9 +50,17 @@ routes.post('/uploadAvatar', uploadFileMiddleware.single('file'), userController
 routes.get('/getAllFriend/:id', userController.getAllFriend);
 
 //[GET] http://localhost:3001/api/user/getDetailsByPhone/:phone
-routes.get('/getDetailsByPhone/:phone',userController.getDetailByPhone)
+routes.get('/getDetailsByPhone/:phone', userController.getDetailByPhone);
 
 //[POST] http://localhost:3001/api/user/deleteFriend/:id
 routes.post('/deleteFriend/:id', userController.deleteFriend);
+
+// xóa invite , xóa lời mời kết bạn người ta gửi cho mình
+//[POST] http://localhost:3001/api/user/deleteInvite/:id
+routes.post('/deleteInvite/:id', userController.deleteInvite);
+
+// xóa listaddFriend , xóa lời mời kết bạn mình gửi cho ngta
+//[POST] http://localhost:3001/api/user/deleteInvite/:id
+routes.post('/deleteListaddFriend/:id', userController.deleteListaddFriend);
 
 module.exports = routes;

@@ -1,6 +1,11 @@
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
-const { genneralAccessToken, genneralRefreshToken, generateTokenAndSetCookie, generateJWTToken } = require('./JwtService');
+const {
+    genneralAccessToken,
+    genneralRefreshToken,
+    generateTokenAndSetCookie,
+    generateJWTToken,
+} = require('./JwtService');
 
 const createUser = (newUser) => {
     return new Promise(async (resolve, reject) => {
@@ -71,7 +76,7 @@ const loginUser = (userLogin) => {
                 id: checkUser.id,
                 isAdmin: checkUser.isAdmin,
             });
-            
+
             resolve({
                 status: 'OK',
                 message: 'SUCCESS',
@@ -97,6 +102,11 @@ const updateUser = (id, data) => {
                     status: 'ERR',
                     massage: 'User is not defined',
                 });
+            }
+            // Kiểm tra xem trường dữ liệu được truyền vào có phải là mật khẩu không
+            if (data.password) {
+                // Mã hóa mật khẩu mới nếu có
+                data.password = bcrypt.hashSync(data.password, 10);
             }
             const updateUser = await User.findByIdAndUpdate(id, data, { new: true });
             console.log('id update', id);
@@ -127,7 +137,7 @@ const deleteFriend = async (id, phoneToDelete) => {
             }
 
             // Tìm vị trí của object trong phoneBooks có phone trùng với phone cần xoá
-            const index = checkUser.phoneBooks.findIndex(item => item.phone === phoneToDelete);
+            const index = checkUser.phoneBooks.findIndex((item) => item.phone === phoneToDelete);
 
             // Nếu không tìm thấy object nào có phone trùng, trả về lỗi
             if (index === -1) {
@@ -154,7 +164,6 @@ const deleteFriend = async (id, phoneToDelete) => {
     });
 };
 
-
 const addFriend = (id, newFriend) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -171,15 +180,13 @@ const addFriend = (id, newFriend) => {
             checkUser.phoneBooks.push(newFriend);
 
             const updatedUser = await checkUser.save();
-            
-          
+
             resolve({
                 status: 'OK',
                 message: 'Friend added successfully',
                 data: updatedUser,
             });
         } catch (error) {
-           
             reject(error);
         }
     });
@@ -198,7 +205,7 @@ const deleteUser = (id) => {
                 });
             }
             await User.findByIdAndDelete(id);
-            
+
             resolve({
                 status: 'OK',
                 message: 'DELETE USER SUCCESS',
@@ -252,7 +259,7 @@ const getDetailByPhone = (phone) => {
     return new Promise(async (resolve, reject) => {
         try {
             const user = await User.findOne({ phone: phone });
-            console.log(user)
+            console.log(user);
             if (user == null) {
                 resolve({
                     status: 'ERR',
@@ -270,11 +277,11 @@ const getDetailByPhone = (phone) => {
         }
     });
 };
-const  getAllFriend = (id) => {
+const getAllFriend = (id) => {
     return new Promise(async (resolve, reject) => {
         try {
             const user = await User.findOne({ _id: id });
-            console.log(user)
+            console.log(user);
             if (user == null) {
                 resolve({
                     status: 'ERR',
@@ -306,15 +313,15 @@ const addInvite = (id, data) => {
                     massage: 'User is not defined',
                 });
             }
-                // Tạo một bản sao của mảng invite và thêm dữ liệu mới vào đó
-                // const newInviteArray = [...checkUser.invite ];
-                // checkUser.invite.push({
-                //     id: data.invite.id,
-                //     name: data.invite.name,
-                //     phone: data.invite.phone
-                // })
+            // Tạo một bản sao của mảng invite và thêm dữ liệu mới vào đó
+            // const newInviteArray = [...checkUser.invite ];
+            // checkUser.invite.push({
+            //     id: data.invite.id,
+            //     name: data.invite.name,
+            //     phone: data.invite.phone
+            // })
 
-            checkUser.invite.push(data)
+            checkUser.invite.push(data);
             const updateUser = await checkUser.save();
             console.log('updateUser', updateUser);
             // console.log('access_Token', access_Token);
@@ -344,15 +351,15 @@ const addListFriend = (id, data) => {
                     massage: 'User is not defined',
                 });
             }
-                // Tạo một bản sao của mảng invite và thêm dữ liệu mới vào đó
-                // const newInviteArray = [...checkUser.invite ];
-                // checkUser.invite.push({
-                //     id: data.invite.id,
-                //     name: data.invite.name,
-                //     phone: data.invite.phone
-                // })
+            // Tạo một bản sao của mảng invite và thêm dữ liệu mới vào đó
+            // const newInviteArray = [...checkUser.invite ];
+            // checkUser.invite.push({
+            //     id: data.invite.id,
+            //     name: data.invite.name,
+            //     phone: data.invite.phone
+            // })
 
-            checkUser.listAddFriend.push(data)
+            checkUser.listAddFriend.push(data);
             const updateUser = await checkUser.save();
             console.log('updateUser', updateUser);
             // console.log('access_Token', access_Token);
@@ -369,6 +376,85 @@ const addListFriend = (id, data) => {
         }
     });
 };
+// delete invite
+const deleteInvite = async (id, phoneToDelete) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            // Tìm người dùng trong cơ sở dữ liệu với id tương ứng và cập nhật phoneBooks
+            console.log('gi z ta', phoneToDelete);
+            const updatedUser = await User.findOneAndUpdate(
+                { _id: id },
+                { $pull: { invite: { phone: phoneToDelete } } },
+                { new: true },
+            );
+
+            // Kiểm tra xem người dùng có tồn tại không
+            if (!updatedUser) {
+                resolve({
+                    status: 'ERR',
+                    message: 'User is not defined',
+                });
+                return;
+            }
+
+            // Kiểm tra xem số điện thoại đã được xóa thành công hay không
+            // if (!updatedUser.invite.some(item => item.phone === phoneToDelete)) {
+            //     resolve({
+            //         status: 'ERR',
+            //         message: 'inivte with this phone number does not exist',
+            //     });
+            //     return;
+            // }
+
+            resolve({
+                status: 'OK',
+                message: 'inivte deleted successfully',
+                data: updatedUser,
+            });
+        } catch (error) {
+            reject(error);
+        }
+    });
+};
+// delete listadd
+const deleteListaddFriend = async (id, phoneToDelete) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            // Tìm người dùng trong cơ sở dữ liệu với id tương ứng và cập nhật phoneBooks
+            const updatedUser = await User.findOneAndUpdate(
+                { _id: id },
+                { $pull: { listAddFriend: { phone: phoneToDelete } } },
+                { new: true },
+            );
+
+            // Kiểm tra xem người dùng có tồn tại không
+            if (!updatedUser) {
+                resolve({
+                    status: 'ERR',
+                    message: 'User is not defined',
+                });
+                return;
+            }
+
+            // Kiểm tra xem số điện thoại đã được xóa thành công hay không
+            // if (!updatedUser.listAddFriend.some(item => item.phone === phoneToDelete)) {
+            //     resolve({
+            //         status: 'ERR',
+            //         message: 'listAddFriend with this phone number does not exist',
+            //     });
+            //     return;
+            // }
+
+            resolve({
+                status: 'OK',
+                message: 'listAddFriend deleted successfully',
+                data: updatedUser,
+            });
+        } catch (error) {
+            reject(error);
+        }
+    });
+};
 module.exports = {
     createUser,
     loginUser,
@@ -381,5 +467,7 @@ module.exports = {
     getDetailsUser,
     getDetailByPhone,
     getAllFriend,
-    deleteFriend
+    deleteFriend,
+    deleteInvite,
+    deleteListaddFriend,
 };
