@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 const express = require('express');
 const {
     getAllConversationOfUser,
@@ -11,16 +12,23 @@ const {
     updateConversation,
 } = require('../contronllers/ConversationController');
 
+=======
+const express = require("express");
+const {getAllConversationOfUser,sendMessageToGroup, sendUploadFileToGroup ,createGroup, getGroupMessages, getConversationById, deleteConversation} = require("../contronllers/ConversationController");
+const uploadFileMiddleware = require('../middleware/fileUpload');
+>>>>>>> 2a3f4d37ade42f773edc7b5bc154598dd487321e
 const router = express.Router();
 
 router.get('/:id', getAllConversationOfUser);
 router.post('/createGroup', createGroup);
 router.get('/getGroupMessages/:groupId', getGroupMessages);
 router.post('/sendMessageToGroup', sendMessageToGroup);
+
 //[get] http://localhost:3001/api/conversations/getConversationById/:id
 router.get('/getConversationById/:id', getConversationById);
 //[post] http://localhost:3001/api/conversations/deleteConversation/:id
 router.post('/deleteConversation/:id', deleteConversation);
+<<<<<<< HEAD
 //[post] http://localhost:3001/api/conversations/addParticipant
 router.post('/addParticipant', addParticipant);
 //[post] http://localhost:3001/api/conversations/removeParticipant
@@ -29,3 +37,10 @@ router.post('/removeParticipant', removeParticipant);
 router.post('/updateConversation/:conversationId', updateConversation);
 
 module.exports = router;
+=======
+
+//[POST] http://localhost:3001/api/conversations/uploadOnApp/:id
+router.post('/uploadOnAppConver/:id', uploadFileMiddleware.single('file'), sendUploadFileToGroup );
+
+module.exports = router;
+>>>>>>> 2a3f4d37ade42f773edc7b5bc154598dd487321e

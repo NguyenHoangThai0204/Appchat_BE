@@ -20,7 +20,6 @@ router.get('/getMessages/:id', getMessagesOnApp);
 //----------UploadFile----------
 
 //[POST] http://localhost:3001/api/messages/upload/:id
-// 
 router.post('/upload/:id', protectRoute, uploadFileMiddleware.single('file'), sendUploadFile);
 
 //[POST] http://localhost:3001/api/messages/uploadOnApp/:id
