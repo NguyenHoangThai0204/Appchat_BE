@@ -146,6 +146,94 @@ const getConversationById = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 };
+// thêm thành viên
+const addParticipant = async (req, res) => {
+    try {
+        const { conversationId, userId } = req.body; // Lấy id của cuộc trò chuyện và id của người dùng từ body của request
+
+        // Kiểm tra xem cuộc trò chuyện tồn tại không
+        const conversation = await Conversation.findById(conversationId);
+        if (!conversation) {
+            return res.status(404).json({ error: 'Cuộc trò chuyện không tồn tại' });
+        }
+
+        // Kiểm tra xem người dùng đã là thành viên của cuộc trò chuyện chưa
+        if (conversation.participants.includes(userId)) {
+            return res.status(400).json({ error: 'Người dùng đã là thành viên của cuộc trò chuyện' });
+        }
+
+        // Thêm userId vào mảng participants của cuộc trò chuyện
+        conversation.participants.push(userId);
+
+        // Lưu lại cuộc trò chuyện sau khi đã thêm thành viên
+        await conversation.save();
+
+        res.status(200).json({ message: 'Thêm thành viên thành công' });
+    } catch (error) {
+        console.error('Lỗi khi thêm thành viên vào cuộc trò chuyện:', error);
+        res.status(500).json({ error: 'Lỗi khi thêm thành viên vào cuộc trò chuyện' });
+    }
+};
+// remove thanh vien
+const removeParticipant = async (req, res) => {
+    try {
+        const { conversationId, userId } = req.body; // Lấy id của cuộc trò chuyện và id của người dùng từ body của request
+
+        // Kiểm tra xem cuộc trò chuyện tồn tại không
+        const conversation = await Conversation.findById(conversationId);
+        if (!conversation) {
+            return res.status(404).json({ error: 'Cuộc trò chuyện không tồn tại' });
+        }
+
+        // Kiểm tra xem người dùng có phải là thành viên của cuộc trò chuyện không
+        if (!conversation.participants.includes(userId)) {
+            return res.status(400).json({ error: 'Người dùng không phải là thành viên của cuộc trò chuyện' });
+        }
+
+        // Loại bỏ userId khỏi mảng participants của cuộc trò chuyện
+        // đê != thay vì !== vì userId là String còn conversation.participants  là object Id => khác kiểu dữ liệu
+        conversation.participants = conversation.participants.filter((participantId) => participantId != userId);
+        // conversation.participants = conversation.participants.filter(participantId => console.log(participantId));
+        // console.log(typeof userId)
+        console.log(conversation.participants);
+        // Lưu lại cuộc trò chuyện sau khi đã xóa thành viên
+        await conversation.save();
+
+        res.status(200).json({ message: 'Xóa thành viên thành công' });
+    } catch (error) {
+        console.error('Lỗi khi xóa thành viên khỏi cuộc trò chuyện:', error);
+        res.status(500).json({ error: 'Lỗi khi xóa thành viên khỏi cuộc trò chuyện' });
+    }
+};
+
+// update
+const updateConversation = async (req, res) => {
+    try {
+        const { conversationId } = req.params; // Lấy id của cuộc trò chuyện từ params của request
+        const { idAdmin } = req.body; // Lấy dữ liệu cập nhật từ body của yêu cầu
+
+        // Kiểm tra xem cuộc trò chuyện tồn tại không
+        const conversation = await Conversation.findById(conversationId);
+        if (!conversation) {
+            return res.status(404).json({ error: 'Cuộc trò chuyện không tồn tại' });
+        }
+
+        // Cập nhật thông tin cuộc trò chuyện
+        if (idAdmin) {
+            conversation.idAdmin = idAdmin;
+        }
+        // conversation.groupName = groupName;
+        // conversation.participants = participants;
+
+        // Lưu lại cuộc trò chuyện sau khi cập nhật
+        await conversation.save();
+
+        res.status(200).json({ message: 'Cập nhật cuộc trò chuyện thành công' });
+    } catch (error) {
+        console.error('Lỗi khi cập nhật cuộc trò chuyện:', error);
+        res.status(500).json({ error: 'Lỗi khi cập nhật cuộc trò chuyện' });
+    }
+};
 
 module.exports = {
     getAllConversationOfUser,
@@ -154,4 +242,7 @@ module.exports = {
     getGroupMessages,
     getConversationById,
     deleteConversation,
+    addParticipant,
+    removeParticipant,
+    updateConversation,
 };

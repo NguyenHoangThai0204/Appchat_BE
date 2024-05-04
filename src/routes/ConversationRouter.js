@@ -1,5 +1,15 @@
-const express = require("express");
-const {getAllConversationOfUser,sendMessageToGroup, createGroup, getGroupMessages, getConversationById, deleteConversation} = require("../contronllers/ConversationController");
+const express = require('express');
+const {
+    getAllConversationOfUser,
+    sendMessageToGroup,
+    createGroup,
+    getGroupMessages,
+    getConversationById,
+    deleteConversation,
+    addParticipant,
+    removeParticipant,
+    updateConversation,
+} = require('../contronllers/ConversationController');
 
 const router = express.Router();
 
@@ -11,4 +21,11 @@ router.post('/sendMessageToGroup', sendMessageToGroup);
 router.get('/getConversationById/:id', getConversationById);
 //[post] http://localhost:3001/api/conversations/deleteConversation/:id
 router.post('/deleteConversation/:id', deleteConversation);
+//[post] http://localhost:3001/api/conversations/addParticipant
+router.post('/addParticipant', addParticipant);
+//[post] http://localhost:3001/api/conversations/removeParticipant
+router.post('/removeParticipant', removeParticipant);
+//[post] http://localhost:3001/api/conversations/updateConversation/:conversationId
+router.post('/updateConversation/:conversationId', updateConversation);
+
 module.exports = router;
