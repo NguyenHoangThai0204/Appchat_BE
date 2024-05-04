@@ -54,40 +54,22 @@ const createGroup = async (req, res) => {
 };
 const getGroupMessages = async (req, res) => {
     try {
-        const { groupId } = req.params; // Lấy id của nhóm từ params của request
-        // Tìm cuộc trò chuyện dựa trên groupId và lấy ra trường messages
-        const conversation = await Conversation.findById(groupId, 'messages');
+        const { groupId } = req.params;
+        const conversation = await Conversation.findById(groupId).populate("messages");
+
         if (!conversation) {
             return res.status(404).json({ error: 'Không tìm thấy cuộc trò chuyện' });
         }
 
-        // Lấy ra các ID của tin nhắn từ conversation.messages
-        const messageIds = conversation.messages;
+        const messages = conversation.messages;
 
-        // Thực hiện truy vấn để lấy nội dung của các tin nhắn
-        const messagePromises = messageIds.map((messageId) => {
-            return Message.findById(messageId);
-        });
-
-        // Kết hợp kết quả của các truy vấn thành một mảng
-        const messages = await Promise.all(messagePromises);
-
-        // Tạo một mảng chứa thông tin cần thiết của các tin nhắn
-        const messagesContent = messages.map((message) => {
-            return {
-                message: message.message,
-                senderId: message.senderId,
-                createdAt: message.createdAt,
-            };
-        });
-
-        // Trả về danh sách các tin nhắn của cuộc trò chuyện
-        res.status(200).json({ messages: messagesContent });
+        res.status(200).json({ messages });
     } catch (error) {
         console.error('Lỗi khi lấy tin nhắn của nhóm:', error);
         res.status(500).json({ error: 'Lỗi khi lấy tin nhắn của nhóm' });
     }
 };
+
 
 const sendMessageToGroup = async (req, res) => {
     try {
@@ -120,6 +102,46 @@ const sendMessageToGroup = async (req, res) => {
         res.status(500).json({ error: 'Lỗi khi gửi tin nhắn đến nhóm' });
     }
 };
+const sendUploadFileToGroup = async (req, res) => {
+    try {
+      const { id: groupId } = req.params; // Sử dụng req.params để lấy id từ URL params
+      const { senderId } = req.query; // Lấy senderId từ query params
+  
+      if (!req.file) {
+        return res.status(400).json({ error: 'Không có file được tải lên' });
+      }
+  
+      const message = req.file.location; // Lấy đường dẫn của file từ req.file.location
+  
+      // Tạo một tin nhắn mới
+      const newMessage = new Message({
+        senderId: senderId,
+        receiverId: groupId,
+        message: message,
+      });
+  
+      // Lưu tin nhắn mới vào cơ sở dữ liệu
+      await newMessage.save();
+  
+      // Thêm ID của tin nhắn mới vào mảng tin nhắn của nhóm
+      const conversation = await Conversation.findById(groupId);
+      if (!conversation) {
+        return res.status(404).json({ error: 'Không tìm thấy cuộc trò chuyện' });
+      }
+      conversation.messages.push(newMessage._id);
+  
+      // Lưu lại thông tin cập nhật của nhóm
+      await conversation.save();
+  
+      // Gửi phản hồi về cho client
+      res.status(201).json({ message: 'Tin nhắn và tệp đã được gửi thành công' });
+    } catch (error) {
+      console.error('Lỗi khi gửi tin nhắn và tệp đến nhóm:', error);
+      res.status(500).json({ error: 'Lỗi khi gửi tin nhắn và tệp đến nhóm' });
+    }
+  };
+  
+
 
 // lay 1 conversation de show thanh vien
 const getConversationById = async (req, res) => {
@@ -148,6 +170,7 @@ const getConversationById = async (req, res) => {
 };
 
 module.exports = {
+    sendUploadFileToGroup ,
     getAllConversationOfUser,
     createGroup,
     sendMessageToGroup,
