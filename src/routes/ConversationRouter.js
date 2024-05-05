@@ -34,7 +34,6 @@ router.post('/removeParticipant', removeParticipant);
 //[post] http://localhost:3001/api/conversations/updateConversation/:conversationId
 router.post('/updateConversation/:conversationId', updateConversation);
 
-
 //[POST] http://localhost:3001/api/conversations/uploadOnApp/:id
 router.post('/uploadOnAppConver/:id', uploadFileMiddleware.single('file'), sendUploadFileToGroup );
 

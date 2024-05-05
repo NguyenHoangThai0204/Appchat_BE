@@ -108,42 +108,40 @@ const sendUploadFileToGroup = async (req, res) => {
     try {
       const { id: groupId } = req.params; // Sử dụng req.params để lấy id từ URL params
       const { senderId } = req.query; // Lấy senderId từ query params
-  
+
       if (!req.file) {
         return res.status(400).json({ error: 'Không có file được tải lên' });
       }
-  
+
       const message = req.file.location; // Lấy đường dẫn của file từ req.file.location
-  
+
       // Tạo một tin nhắn mới
       const newMessage = new Message({
         senderId: senderId,
         receiverId: groupId,
         message: message,
       });
-  
+
       // Lưu tin nhắn mới vào cơ sở dữ liệu
       await newMessage.save();
-  
+
       // Thêm ID của tin nhắn mới vào mảng tin nhắn của nhóm
       const conversation = await Conversation.findById(groupId);
       if (!conversation) {
         return res.status(404).json({ error: 'Không tìm thấy cuộc trò chuyện' });
       }
       conversation.messages.push(newMessage._id);
-  
+
       // Lưu lại thông tin cập nhật của nhóm
       await conversation.save();
-  
+
       // Gửi phản hồi về cho client
       res.status(201).json({ message: 'Tin nhắn và tệp đã được gửi thành công' });
     } catch (error) {
       console.error('Lỗi khi gửi tin nhắn và tệp đến nhóm:', error);
       res.status(500).json({ error: 'Lỗi khi gửi tin nhắn và tệp đến nhóm' });
     }
-  };  
-  
-
+  };
 
 // lay 1 conversation de show thanh vien
 const getConversationById = async (req, res) => {

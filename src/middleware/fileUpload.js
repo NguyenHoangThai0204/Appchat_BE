@@ -40,7 +40,9 @@ const upload = multer({
     fileFilter: function (req, file, cb) {
         checkFileType( file, cb);
     },
-    limits: { fileSize: 1000000 },
+    limits: {
+        fileSize: 10 * 1024 * 1024, // ví dụ: tối đa 10 MB
+    },
 });
 
 const uploadFileMiddleware = upload 
