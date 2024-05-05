@@ -9,6 +9,7 @@ const {
     addParticipant,
     removeParticipant,
     updateConversation,
+    getParticipantOfGroup,
     sendUploadFileToGroup
 } = require('../contronllers/ConversationController');
 const uploadFileMiddleware = require('../middleware/fileUpload');
@@ -27,8 +28,10 @@ router.get('/getConversationById/:id', getConversationById);
 
 //[post] http://localhost:3001/api/conversations/deleteConversation/:id
 router.post('/deleteConversation/:id', deleteConversation);
+
 //[post] http://localhost:3001/api/conversations/addParticipant
 router.post('/addParticipant', addParticipant);
+
 //[post] http://localhost:3001/api/conversations/removeParticipant
 router.post('/removeParticipant', removeParticipant);
 //[post] http://localhost:3001/api/conversations/updateConversation/:conversationId
@@ -36,5 +39,9 @@ router.post('/updateConversation/:conversationId', updateConversation);
 
 //[POST] http://localhost:3001/api/conversations/uploadOnApp/:id
 router.post('/uploadOnAppConver/:id', uploadFileMiddleware.single('file'), sendUploadFileToGroup );
+
+// lấy ra danh sách người tham gia
+// [GET]
+router.get('/getParticipant/:id', getParticipantOfGroup)
 
 module.exports = router;

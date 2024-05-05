@@ -70,7 +70,6 @@ const getGroupMessages = async (req, res) => {
     }
 };
 
-
 const sendMessageToGroup = async (req, res) => {
     try {
         const { groupId, senderId, message } = req.body; // Nhận dữ liệu từ client
@@ -102,7 +101,6 @@ const sendMessageToGroup = async (req, res) => {
         res.status(500).json({ error: 'Lỗi khi gửi tin nhắn đến nhóm' });
     }
 };
-
 
 const sendUploadFileToGroup = async (req, res) => {
     try {
@@ -150,7 +148,7 @@ const getConversationById = async (req, res) => {
         console.log('conversationId: ', id);
 
         // Tìm cuộc trò chuyện theo ID và populate thông tin của các participants
-        const conversation = await Conversation.findById(id);
+        const conversation = await Conversation.findById({ _id: id });
 
         if (!conversation) {
             return res.status(404).json({ message: 'Conversation not found' });
@@ -158,16 +156,14 @@ const getConversationById = async (req, res) => {
 
         console.log('conversation: ', conversation);
         // Lấy danh sách ID người tham gia từ cuộc trò chuyện
-        const participantIds = conversation.participants;
-        const participantsInfo = await User.find({ _id: { $in: participantIds } });
 
-        console.log(participantsInfo);
-        res.status(200).json(participantsInfo);
+        res.status(200).json(conversation);
     } catch (error) {
         console.error('Error fetching conversation:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
 };
+
 // thêm thành viên
 const addParticipant = async (req, res) => {
     try {
@@ -257,10 +253,46 @@ const updateConversation = async (req, res) => {
     }
 };
 
+// lấy ra danh sách người tham gia
+const getParticipantOfGroup = async (req, res) => {
+    try {
+        const { id } = req.params;
+        console.log('conversationId: ', id);
+
+        // Tìm cuộc trò chuyện theo ID và populate thông tin của các participants
+        const conversation = await Conversation.findById(id)
+            .populate({
+                path: 'participants',
+                select: '_id name email avatar', // Lọc ra các trường của user bạn muốn hiển thị
+                model: 'User' // Tên model của user trong schema của Conversation
+            });
+
+        if (!conversation) {
+            return res.status(404).json({ message: 'Conversation not found' });
+        }
+
+        console.log('conversation: ', conversation);
+        
+        // Lấy ra danh sách user từ thông tin của các participants
+        const userList = conversation.participants.map(participant => ({
+            _id: participant._id,
+            name: participant.name,
+            avatar: participant.avatar
+        }));
+        
+        // Trả về danh sách user
+        res.status(200).json(userList);
+    } catch (error) {
+        console.error('Error fetching conversation:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
 module.exports = {
     sendUploadFileToGroup ,
     getAllConversationOfUser,
     createGroup,
+    getParticipantOfGroup,
     sendMessageToGroup,
     getGroupMessages,
     getConversationById,
