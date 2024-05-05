@@ -102,6 +102,8 @@ const sendMessageToGroup = async (req, res) => {
         res.status(500).json({ error: 'Lỗi khi gửi tin nhắn đến nhóm' });
     }
 };
+
+
 const sendUploadFileToGroup = async (req, res) => {
     try {
       const { id: groupId } = req.params; // Sử dụng req.params để lấy id từ URL params
@@ -139,7 +141,7 @@ const sendUploadFileToGroup = async (req, res) => {
       console.error('Lỗi khi gửi tin nhắn và tệp đến nhóm:', error);
       res.status(500).json({ error: 'Lỗi khi gửi tin nhắn và tệp đến nhóm' });
     }
-  };
+  };  
   
 
 
